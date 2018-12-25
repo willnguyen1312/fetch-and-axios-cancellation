@@ -13,45 +13,37 @@ let history = createHistory(window as any)
 const CancelToken = axios.CancelToken;
 let source = CancelToken.source();
 
+let abortController = new AbortController();
+let signal = abortController.signal
+
 
 history.listen((...args) => {
     // cancel the request (the message parameter is optional)
-    source.cancel('Operation canceled by the user.');
-    source= CancelToken.source();
+    abortController.abort();
+    abortController = new AbortController();
+    signal = abortController.signal
 })
 
 class Invoices extends React.Component<RouteComponentProps> {
     componentDidMount() {
 
-        axios.get('https://jsonplaceholder.typicode.com/posts', {
-            cancelToken: source.token
-        }).catch(function (thrown) {
-            if (axios.isCancel(thrown)) {
-                console.log('Request canceled', thrown.message);
-            } else {
-                // handle error
-            }
-        }).then(console.log)
+        fetch('https://jsonplaceholder.typicode.com/posts', { signal }).then(function (response) {
+            console.log(response)
+        }).catch(function (e) {
+            console.log(e)
+        })
 
-        axios.get('https://jsonplaceholder.typicode.com/posts', {
-            cancelToken: source.token
-        }).catch(function (thrown) {
-            if (axios.isCancel(thrown)) {
-                console.log('Request canceled', thrown.message);
-            } else {
-                // handle error
-            }
-        }).then(console.log)
+        fetch('https://jsonplaceholder.typicode.com/posts', { signal }).then(function (response) {
+            console.log(response)
+        }).catch(function (e) {
+            console.log(e)
+        })
 
-        axios.get('https://jsonplaceholder.typicode.com/posts', {
-            cancelToken: source.token
-        }).catch(function (thrown) {
-            if (axios.isCancel(thrown)) {
-                console.log('Request canceled', thrown.message);
-            } else {
-                // handle error
-            }
-        }).then(console.log)
+        fetch('https://jsonplaceholder.typicode.com/posts', { signal }).then(function (response) {
+            console.log(response)
+        }).catch(function (e) {
+            console.log(e)
+        })
     }
     render() {
         return <div>
