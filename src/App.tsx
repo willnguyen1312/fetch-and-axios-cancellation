@@ -24,31 +24,23 @@ history.listen((...args) => {
   signal = abortController.signal;
 });
 
+const callAPI = (cancellable: boolean) => {
+  fetch("https://jsonplaceholder.typicode.com/posts", {
+    signal: cancellable ? signal : undefined
+  })
+    .then(function(response) {
+      console.log(response);
+    })
+    .catch(function(e) {
+      console.log(e);
+    });
+};
+
 class Invoices extends React.Component<RouteComponentProps> {
   componentDidMount() {
-    fetch("https://jsonplaceholder.typicode.com/posts", { signal })
-      .then(function(response) {
-        console.log(response);
-      })
-      .catch(function(e) {
-        console.log(e);
-      });
-
-    fetch("https://jsonplaceholder.typicode.com/posts", { signal })
-      .then(function(response) {
-        console.log(response);
-      })
-      .catch(function(e) {
-        console.log(e);
-      });
-
-    fetch("https://jsonplaceholder.typicode.com/posts", { signal })
-      .then(function(response) {
-        console.log(response);
-      })
-      .catch(function(e) {
-        console.log(e);
-      });
+    callAPI(true);
+    callAPI(true);
+    callAPI(true);
   }
   render() {
     return (
@@ -69,29 +61,29 @@ class Dash extends React.Component<RouteComponentProps> {
   }
 }
 
-const Main: any = ({
-  children,
-  ...rest
-}: {
-  children: React.ReactChildren;
-}) => {
-  console.log(rest);
-  return (
-    <div>
-      <h1>Welcome to the App!</h1>
-      <ul>
-        <li>
-          <Link to="dashboard">Dashboard</Link>
-        </li>
-        <li>
-          <Link to="invoices">Invoices</Link>
-        </li>
-      </ul>
-      <hr />
-      {children}
-    </div>
-  );
-};
+class Main extends React.Component<RouteComponentProps> {
+  componentDidMount() {
+    callAPI(false);
+  }
+  render() {
+    const { children } = this.props;
+    return (
+      <div>
+        <h1>Welcome to the App!</h1>
+        <ul>
+          <li>
+            <Link to="dashboard">Dashboard</Link>
+          </li>
+          <li>
+            <Link to="invoices">Invoices</Link>
+          </li>
+        </ul>
+        <hr />
+        {children}
+      </div>
+    );
+  }
+}
 
 class App extends React.Component {
   state = {
@@ -109,7 +101,7 @@ class App extends React.Component {
     return (
       <LocationProvider history={history}>
         <Router>
-          <Main state={this.state} path="/">
+          <Main path="/">
             <Invoices path="invoices" />
             <Dash path="dashboard" />
           </Main>
